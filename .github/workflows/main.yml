@@ -36,12 +36,16 @@ jobs:
     needs: CI
     
     steps:
-      - uses: actions/checkout@v3
-      - name: Definindo o KubeConfig
-        uses: Azure/k8s-set-context@v3
-        with:
-           method: kubeconfig
-           kubeconfig: ${{secrets.K8S_CONFIG}}
+      - uses: actions/checkout@v4.1.2
+        name: Checkout do repositorio
+      - name: Configuracao do Ambiente AWS
+        uses: aws-actions/configure-aws-credentials@v4
+        with:  
+          aws-region: "us-east-1"
+          aws-access-key-id: ${{AWS_ACCESS_KEY}}
+          aws-secret-access-key: ${{AWS_ACCESS_SECRET}}
+      - name: Configuração do KubeConfig
+        run: aws eks update-kubeconfig --name devops4devs-eks --region us-east-1
       - name: Atualização Manifesto
         shell: bash
         run: |

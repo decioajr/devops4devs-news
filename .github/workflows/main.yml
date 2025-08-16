@@ -51,12 +51,9 @@ jobs:
         run: |
           sed -i "s#{{AWS_ACCESS_KEY}}#${{ secrets.AWS_ACCESS_KEY }}#g" ./k8s/deploy.yaml
           sed -i "s#{{AWS_ACCESS_SECRET}}#${{ secrets.AWS_ACCESS_SECRET }}#g" ./k8s/deploy.yaml
-      - name: Deploy no Cluster Kubernetes
-        uses: Azure/k8s-deploy@v4.9
-        with:
-          manifests: |
-            ./k8s/deploy.yaml
-          images: decioajr/devops4dev-news:v${{github.run_number}}
+      - name: Deploy manifests
+        run: |
+          kubectl apply -f ./k8s/deploy.yaml --namespace default
           
           
           

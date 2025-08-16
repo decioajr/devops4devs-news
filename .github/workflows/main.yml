@@ -42,6 +42,11 @@ jobs:
         with:
            method: kubeconfig
            kubeconfig: ${{secrets.K8S_CONFIG}}
+      - name: Atualização Manifesto
+        shell: bash
+        run: |
+          sed -i "s/{{AWS_ACCESS_KEY}}/${{secrets.AWS_ACCESS_KEY}}/g" .k8s/dploy.yaml
+          sed -i "s/{{AWS_ACCESS_SECRET}}/${{secrets.AWS_ACCESS_SECRET}}/g" .k8s/dploy.yaml
       - name: Deploy no Cluster Kubernetes
         uses: Azure/k8s-deploy@v4.9
         with:

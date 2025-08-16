@@ -17,8 +17,8 @@ jobs:
         uses: docker/login-action@v2.1.0
         with:
           # Server address of Docker registry. If not set then will default to Docker Hub
-          username: ${{secrets.DOCKERHUB_USER}}
-          password: ${{secrets.DOCKERHUB_PWD}}
+          username: ${{secrets.DOCKERHUB_USERNAME}}
+          password: ${{secrets.DOCKERHUB_TOKEN}}
           
       - name: Construindo a imagem e enviando para o DockerHub   
         uses: docker/build-push-action@v3.2.0

@@ -1,0 +1,104 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata: 
+  name: postgre
+spec:
+  selector:
+    matchLabels:
+      app: postgre
+  template:
+    metadata:
+      labels:
+        app: postgre
+    spec:
+      containers:
+      - name: postgre
+        image: postgres:15.0
+        ports:
+        - containerPort: 5432
+        env:
+        - name: POSTGRES_USER
+          value: "newsuser"
+        - name: POSTGRES_PASSWORD
+          value: "newspwd"
+        - name: POSTGRES_DB
+          value: "news"
+      restartPolicy: Always
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgre
+spec:
+  selector:
+    app: postgre
+  ports:
+  - protocol: TCP
+    port: 5432
+    targetPort: 5432
+  type: ClusterIP
+
+---
+# Preciso criar um Deployment para o web app
+# O web app deve ser executado na porta 8080
+# O web app deve se conectar ao banco de dados postgre
+# O web app deve ter as seguintes variáveis de ambiente:
+# No deployment que defino o total de replicas
+apiVersion: apps/v1
+kind: Deployment 
+metadata: 
+  name: web 
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: web
+  template:
+    metadata:
+      labels:
+        app: web
+    spec:
+      containers:
+      - name: web
+        image: decioajr/devops4dev-news:v4
+        ports:
+        - containerPort: 8080
+        env:
+        - name: DB_DATABASE
+          value: "news"
+        - name: DB_USER_NAME
+          value: "newsuser"
+        - name: DB_PASSWORD  
+          value: "newspwd" 
+        - name: DB_HOST  
+          value: "postgre"
+        - name: AWS_ACCESS_KEY  
+          value: "{{AWS_ACCESS_KEY}}"
+        - name: AWS_ACCESS_SECRET  
+          value: "{{AWS_ACCESS_SECRET}}"
+        - name: AWS_S3_BUCKET_NAME  
+          value: "dadolfo-files"
+        - name: STORAGE_TYPE  
+          value: "S3"      
+      restartPolicy: Always
+
+---
+# Preciso criar um Service para expor o web app
+# e um Service de tipo NodePort para acessar o web app externamente
+# O NodePort deve ser 30000
+# O Service deve ser do tipo NodePort
+apiVersion: v1
+kind: Service
+metadata:
+  name: web
+spec:
+  selector:
+    app: web
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 8080
+    nodePort: 30000
+  type: NodePort
+

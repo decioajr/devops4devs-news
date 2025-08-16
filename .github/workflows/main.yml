@@ -7,7 +7,7 @@ on:
 
 jobs:
     CI:
-      runs-in: unbuntu-latest
+      runs-on: unbuntu-latest
       steps:
         - name: Consturção da iamgem docker
           run: echo "Docker Build"

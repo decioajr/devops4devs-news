@@ -1,0 +1,23 @@
+name: CI-CD
+
+on: 
+    push:
+      branches: ["main"]
+    workflow_dispatch:
+
+jobs:
+    CI:
+      runs-in: unbuntu-latest
+      steps:
+        - name: Consturção da iamgem docker
+          run: echo "Docker Build"
+        - name: "Publicar a imagem no Docker Hub"
+          run: echo "Docker push"
+    CD:
+      needs: [CI]
+      runs-on: unbuntu-lastest
+      steps:
+        - name: Conectar com Kubernetes
+          run: echo "Configraução do Kubeinf"
+        - name: Executar Deploy
+          run: echo "Kubectl apply"
